@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { NavBar } from "@/components/NavBar";
 import { 
   FileText, 
@@ -8,16 +8,21 @@ import {
   Handshake,
   ArrowRight,
   Moon,
-  Sun
+  Sun,
+  ThumbsUp
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { motion, useAnimation, useInView } from 'framer-motion';
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from '@/components/ui/carousel';
+import { Dialog, DialogContent, DialogFooter } from "@/components/ui/dialog";
+import { toast } from "@/hooks/use-toast";
 
 const HomePage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [showLoggedOutDialog, setShowLoggedOutDialog] = useState(false);
 
   // Water footprint state for handshake card
   const [footprints, setFootprints] = useState<{ id: number; x: number; y: number }[]>([]);
@@ -25,6 +30,38 @@ const HomePage = () => {
   const idleTimeout = useRef<NodeJS.Timeout | null>(null);
 
   const [darkMode, setDarkMode] = useState(false);
+
+  const steps = [
+    {
+      icon: <FileText className="text-blue-600 h-12 w-12 mx-auto mb-6" />, 
+      title: 'Post Your Request', 
+      desc: 'Describe what you need help buying and set budget requirements.'
+    },
+    {
+      icon: <Users className="text-blue-600 h-12 w-12 mx-auto mb-6" />, 
+      title: 'Choose a Middleman', 
+      desc: 'Browse profiles, ratings and select the ideal middleman.'
+    },
+    {
+      icon: <CheckCircle className="text-blue-600 h-12 w-12 mx-auto mb-6" />, 
+      title: 'Complete Transaction', 
+      desc: 'Receive your item, release payment when satisfied.'
+    }
+  ];
+  const [selectedIdx, setSelectedIdx] = useState(0);
+  const handlePrev = () => setSelectedIdx((selectedIdx - 1 + steps.length) % steps.length);
+  const handleNext = () => setSelectedIdx((selectedIdx + 1) % steps.length);
+
+  useEffect(() => {
+    if (location.state && location.state.showLoggedOut) {
+      setShowLoggedOutDialog(true);
+      toast({
+        title: "✔ Logged out successfully",
+      });
+      // Remove the state so it doesn't show again on refresh
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location, navigate]);
 
   const handleCardMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const card = e.currentTarget.getBoundingClientRect();
@@ -52,32 +89,6 @@ const HomePage = () => {
       behavior: "smooth"
     });
   };
-
-  // Animated Section Wrapper
-  function AnimatedSection({ children, delay = 0 }) {
-    const ref = useRef(null);
-    const inView = useInView(ref, { once: true, margin: '-100px' });
-    const controls = useAnimation();
-    useEffect(() => {
-      if (inView) {
-        controls.start('visible');
-      }
-    }, [inView, controls]);
-    return (
-      <motion.section
-        ref={ref}
-        initial="hidden"
-        animate={controls}
-        variants={{
-          hidden: { opacity: 0, y: 80, scale: 0.98 },
-          visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.8, delay } },
-        }}
-        style={{ willChange: 'opacity, transform' }}
-      >
-        {children}
-      </motion.section>
-    );
-  }
 
   return (
     <div className={`flex flex-col min-h-screen relative ${darkMode ? 'bg-[#181e29]' : ''}`}>
@@ -220,134 +231,78 @@ const HomePage = () => {
       </section>
 
       {/* How It Works Section with Carousel */}
-      <AnimatedSection delay={0.1}>
-        <section id="how-it-works" className={`py-16 ${darkMode ? 'bg-[#232b3a]' : 'bg-white'} relative overflow-hidden flex flex-col items-center`}>
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB4PSIwIiB5PSIwIiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSgxNSkiPjxjaXJjbGUgY3g9IjMwIiBjeT0iMzAiIHI9IjIiIGZpbGw9InJnYmEoMCw5MCwyNTUsMC4wNSkiPjwvY2lyY2xlPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNwYXR0ZXJuKSI+PC9yZWN0Pjwvc3ZnPg==')]"></div>
-          <div className="container mx-auto px-4 relative z-10 flex flex-col items-center">
-            <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }}>
+      <section id="how-it-works" className={`py-16 ${darkMode ? 'bg-[#232b3a]' : 'bg-white'} relative overflow-hidden flex flex-col items-center`}>
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB4PSIwIiB5PSIwIiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSgxNSkiPjxjaXJjbGUgY3g9IjMwIiBjeT0iMzAiIHI9IjIiIGZpbGw9InJnYmEoMCw5MCwyNTUsMC4wNSkiPjwvY2lyY2xlPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNwYXR0ZXJuKSI+PC9yZWN0Pjwvc3ZnPg==')]"></div>
+        <div className="container mx-auto px-4 relative z-10 flex flex-col items-center">
           <div className="text-center mb-12">
             <div className="inline-block mb-4">
-                  <motion.div
-                    initial={{ scale: 0, rotate: 0 }}
-                    whileInView={{ scale: 1, rotate: 360 }}
-                    transition={{ type: 'spring', stiffness: 120, damping: 10, duration: 1.2 }}
-                    viewport={{ once: true }}
-                    className="rounded-full bg-blue-100 p-2 inline-block shadow-lg"
-                  >
+              <div className="rounded-full bg-blue-100 p-2 inline-block shadow-lg">
                 <div className="rounded-full bg-blue-200 p-2">
                   <div className="rounded-full bg-blue-300 p-2">
-                        <motion.div
-                          animate={{ color: ["#2563eb", "#22c55e", "#2563eb"] }}
-                          transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
-                        >
-                          <CheckCircle className="h-8 w-8" style={{ color: 'currentColor' }} />
-                        </motion.div>
-                      </div>
+                    <CheckCircle className="h-8 w-8 text-blue-600" />
                   </div>
-                  </motion.div>
                 </div>
-                <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-800 to-blue-500 dark:from-blue-300 dark:to-blue-500">How It Works</h2>
-                <p className="text-center max-w-2xl mx-auto mb-12 text-lg font-semibold text-blue-600 dark:text-blue-200">
-                  Our platform connects buyers with verified middlemen for secure transactions.
-                </p>
               </div>
-            </motion.div>
-            {/* Custom 3-card How It Works Carousel */}
-            <div className="w-full max-w-2xl relative flex items-center justify-center">
-              {(() => {
-                const steps = [
-                  {
-                    icon: <FileText className="text-blue-600 h-12 w-12 mx-auto mb-6" />, 
-                    title: 'Post Your Request', 
-                    desc: 'Describe what you need help buying and set budget requirements.'
-                  },
-                  {
-                    icon: <Users className="text-blue-600 h-12 w-12 mx-auto mb-6" />, 
-                    title: 'Choose a Middleman', 
-                    desc: 'Browse profiles, ratings and select the ideal middleman.'
-                  },
-                  {
-                    icon: <CheckCircle className="text-blue-600 h-12 w-12 mx-auto mb-6" />, 
-                    title: 'Complete Transaction', 
-                    desc: 'Receive your item, release payment when satisfied.'
-                  }
-                ];
-                const [selectedIdx, setSelectedIdx] = useState(0);
-                const handlePrev = () => setSelectedIdx((selectedIdx - 1 + steps.length) % steps.length);
-                const handleNext = () => setSelectedIdx((selectedIdx + 1) % steps.length);
-                // Indices for left, center, right
-                const leftIdx = (selectedIdx - 1 + steps.length) % steps.length;
-                const rightIdx = (selectedIdx + 1) % steps.length;
-                return (
-                  <div className="flex items-center justify-center w-full relative">
-                    <button onClick={handlePrev} className="absolute left-0 z-20 bg-white border border-blue-100 rounded-full p-2 shadow hover:bg-blue-50 transition-colors">
-                      <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" /></svg>
-                    </button>
-                    <div className="flex items-center justify-center w-full gap-10">
-                      {/* Left blurred card with partial content */}
-                      <motion.div
-                        key={leftIdx}
-                        initial={{ scale: 0.8, opacity: 0.7, filter: 'blur(8px)' }}
-                        animate={{ scale: 0.85, opacity: 0.7, filter: 'blur(3px)' }}
-                        transition={{ type: 'spring', stiffness: 180, damping: 24 }}
-                        className="w-72 h-96 bg-blue-100 rounded-2xl border-4 border-blue-50 flex flex-col items-center justify-center select-none"
-                        style={{ pointerEvents: 'none' }}
-                      >
-                        <div className="opacity-60 blur-sm flex flex-col items-center justify-center w-full h-full">
-                          {steps[leftIdx].icon}
-                          <h3 className="font-semibold text-2xl mb-4 text-center text-blue-800">{steps[leftIdx].title}</h3>
-                          <p className="text-gray-600 text-center text-lg px-4">{steps[leftIdx].desc}</p>
             </div>
-                      </motion.div>
-                      {/* Center card with content */}
-                      <motion.div
-                        key={selectedIdx}
-                        initial={{ scale: 0.9, opacity: 0, y: 40 }}
-                        animate={{ scale: 1.1, opacity: 1, y: 0, filter: 'blur(0px)' }}
-                        exit={{ scale: 0.9, opacity: 0, y: 40 }}
-                        transition={{ type: 'spring', stiffness: 200, damping: 22 }}
-                        className="w-80 h-96 bg-white rounded-2xl shadow-2xl flex flex-col items-center justify-center border-4 border-blue-100 z-10"
-                        style={{ pointerEvents: 'auto' }}
-                      >
-                        <motion.div
-                          animate={{ color: ["#2563eb", "#22c55e", "#2563eb"] }}
-                          transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
-                        >
-                          {steps[selectedIdx].icon}
-                        </motion.div>
-                        <h3 className="font-semibold text-2xl mb-4 text-center text-blue-800">{steps[selectedIdx].title}</h3>
-                        <p className="text-gray-600 text-center text-lg px-4">{steps[selectedIdx].desc}</p>
-                      </motion.div>
-                      {/* Right blurred card with partial content */}
-                      <motion.div
-                        key={rightIdx}
-                        initial={{ scale: 0.8, opacity: 0.7, filter: 'blur(8px)' }}
-                        animate={{ scale: 0.85, opacity: 0.7, filter: 'blur(3px)' }}
-                        transition={{ type: 'spring', stiffness: 180, damping: 24 }}
-                        className="w-72 h-96 bg-blue-100 rounded-2xl border-4 border-blue-50 flex flex-col items-center justify-center select-none"
-                        style={{ pointerEvents: 'none' }}
-                      >
-                        <div className="opacity-60 blur-sm flex flex-col items-center justify-center w-full h-full">
-                          {steps[rightIdx].icon}
-                          <h3 className="font-semibold text-2xl mb-4 text-center text-blue-800">{steps[rightIdx].title}</h3>
-                          <p className="text-gray-600 text-center text-lg px-4">{steps[rightIdx].desc}</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-800 to-blue-500 dark:from-blue-300 dark:to-blue-500">How It Works</h2>
+            <p className="text-center max-w-2xl mx-auto mb-12 text-lg font-semibold text-blue-600 dark:text-blue-200">
+              Our platform connects buyers with verified middlemen for secure transactions.
+            </p>
+          </div>
+          {/* Custom 3-card How It Works Carousel */}
+          <div className="w-full max-w-2xl relative flex items-center justify-center">
+            <div className="flex items-center justify-center w-full relative">
+              <button onClick={e => { e.preventDefault(); handlePrev(); }} className="absolute left-0 z-20 bg-white border border-blue-100 rounded-full p-2 shadow hover:bg-blue-50 transition-colors">
+                <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" /></svg>
+              </button>
+              <div className="flex items-center justify-center w-full gap-10">
+                {/* Left blurred card with partial content */}
+                <div
+                  key={((selectedIdx - 1 + steps.length) % steps.length)}
+                  className="w-72 h-96 bg-blue-100 rounded-2xl border-4 border-blue-50 flex flex-col items-center justify-center select-none"
+                  style={{ pointerEvents: 'none' }}
+                >
+                  <div className="flex flex-col items-center justify-center w-full h-full">
+                    {steps[(selectedIdx - 1 + steps.length) % steps.length].icon}
+                    <h3 className="font-semibold text-2xl mb-4 text-center text-blue-800">{steps[(selectedIdx - 1 + steps.length) % steps.length].title}</h3>
+                    <p className="text-gray-600 text-center text-lg px-4">{steps[(selectedIdx - 1 + steps.length) % steps.length].desc}</p>
+                  </div>
+                </div>
+                {/* Center card with content */}
+                <div
+                  key={selectedIdx}
+                  className="w-80 h-96 bg-white rounded-2xl shadow-2xl flex flex-col items-center justify-center border-4 border-blue-100 z-10"
+                  style={{ pointerEvents: 'auto' }}
+                >
+                  <div>
+                    {steps[selectedIdx].icon}
+                  </div>
+                  <h3 className="font-semibold text-2xl mb-4 text-center text-blue-800">{steps[selectedIdx].title}</h3>
+                  <p className="text-gray-600 text-center text-lg px-4">{steps[selectedIdx].desc}</p>
+                </div>
+                {/* Right blurred card with partial content */}
+                <div
+                  key={((selectedIdx + 1) % steps.length)}
+                  className="w-72 h-96 bg-blue-100 rounded-2xl border-4 border-blue-50 flex flex-col items-center justify-center select-none"
+                  style={{ pointerEvents: 'none' }}
+                >
+                  <div className="flex flex-col items-center justify-center w-full h-full">
+                    {steps[(selectedIdx + 1) % steps.length].icon}
+                    <h3 className="font-semibold text-2xl mb-4 text-center text-blue-800">{steps[(selectedIdx + 1) % steps.length].title}</h3>
+                    <p className="text-gray-600 text-center text-lg px-4">{steps[(selectedIdx + 1) % steps.length].desc}</p>
+                  </div>
+                </div>
               </div>
-                      </motion.div>
+              <button onClick={e => { e.preventDefault(); handleNext(); }} className="absolute right-0 z-20 bg-white border border-blue-100 rounded-full p-2 shadow hover:bg-blue-50 transition-colors">
+                <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" /></svg>
+              </button>
             </div>
-                    <button onClick={handleNext} className="absolute right-0 z-20 bg-white border border-blue-100 rounded-full p-2 shadow hover:bg-blue-50 transition-colors">
-                      <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" /></svg>
-                    </button>
-              </div>
-                );
-              })()}
           </div>
         </div>
       </section>
-      </AnimatedSection>
 
       {/* Why Choose Us Section */}
-      <AnimatedSection delay={0.5}>
-        <section className={`py-16 ${darkMode ? 'bg-gradient-to-r from-[#232b3a] to-[#181e29]' : 'bg-gradient-to-r from-blue-50 to-blue-100'} relative overflow-hidden`}>
+      <section className={`py-16 ${darkMode ? 'bg-gradient-to-r from-[#232b3a] to-[#181e29]' : 'bg-gradient-to-r from-blue-50 to-blue-100'} relative overflow-hidden`}>
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB4PSIwIiB5PSIwIiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSgxNSkiPjxjaXJjbGUgY3g9IjMwIiBjeT0iMzAiIHI9IjIiIGZpbGw9InJnYmEoMCw5MCwyNTUsMC4wNSkiPjwvY2lyY2xlPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNwYXR0ZXJuKSI+PC9yZWN0Pjwvc3ZnPg==')]"></div>
         <div className="container mx-auto px-4 relative z-10">
             <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }} viewport={{ once: true }}>
@@ -427,7 +382,6 @@ const HomePage = () => {
           </div>
         </div>
       </section>
-      </AnimatedSection>
 
       {/* CTA Section */}
       <section className={`${darkMode ? 'bg-gradient-to-r from-[#232b3a] to-[#181e29] text-gray-100' : 'bg-gradient-to-r from-blue-600 to-blue-800 text-white'} py-16 relative overflow-hidden`}>
@@ -467,6 +421,19 @@ const HomePage = () => {
           </div>
         </div>
       </footer>
+      <Dialog open={showLoggedOutDialog} onOpenChange={setShowLoggedOutDialog}>
+        <DialogContent className="sm:max-w-md text-center" hideCloseButton>
+          <div className="flex flex-col items-center gap-4 py-2">
+            <ThumbsUp className="h-12 w-12 text-black mx-auto" />
+            <div className="font-bold text-lg mt-2">You've successfully<br />Logged out.</div>
+          </div>
+          <DialogFooter className="flex flex-col gap-2 mt-4">
+            <Button variant="destructive" className="w-full" onClick={() => navigate('/login')}>
+              Back to Login
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

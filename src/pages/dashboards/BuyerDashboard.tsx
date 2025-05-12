@@ -1,7 +1,7 @@
 import { NavBar } from "@/components/NavBar";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { ShoppingBag, Package, CreditCard, UserCheck, MessageCircle, Eye } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -44,6 +44,7 @@ function getStatusColor(status) {
 }
 
 const BuyerDashboard = () => {
+  const navigate = useNavigate();
   const dashboardCards = [
     {
       title: "Browse Middlemen",
@@ -63,10 +64,43 @@ const BuyerDashboard = () => {
       icon: <MessageCircle className="h-10 w-10 text-blue-500" />,
       link: "/dashboard/buyer/chat"
     },
+    {
+      title: "Add Product",
+      description: "List a new product for sale",
+      icon: <Package className="h-10 w-10 text-blue-500" />,
+      action: "addProduct"
+    },
   ];
 
   const [selectedOrder, setSelectedOrder] = React.useState(null);
   const [dialogOpen, setDialogOpen] = React.useState(false);
+  const [addProductOpen, setAddProductOpen] = React.useState(false);
+  const [productForm, setProductForm] = React.useState({ name: '', description: '', price: '' });
+  const [products, setProducts] = React.useState([]);
+
+  const handleProductFormChange = (e) => {
+    const { name, value } = e.target;
+    setProductForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleProductFormSubmit = (e) => {
+    e.preventDefault();
+    // Add product to state
+    setProducts((prev) => [
+      ...prev,
+      {
+        name: productForm.name,
+        description: productForm.description,
+        price: productForm.price,
+        id: Date.now(),
+      },
+    ]);
+    setAddProductOpen(false);
+    setProductForm({ name: '', description: '', price: '' });
+    // Redirect to Browse Middlemen page
+    navigate('/dashboard/buyer/middlemen');
+    // Optionally show a toast/notification
+  };
 
   return (
     <div className="page-container">
@@ -74,19 +108,49 @@ const BuyerDashboard = () => {
       <main className="flex-1 bg-blue-50">
         <div className="container mx-auto px-4 py-8">
           {/* <h1 className="text-3xl font-bold mb-8">Buyer Dashboard</h1> */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
             {dashboardCards.map((card, index) => (
-              <Link to={card.link} key={index}>
-                <Card className="dashboard-card hover:border-blue-300 transition-all hover:shadow-md cursor-pointer h-[240px] flex items-center justify-center">
+              card.action === "addProduct" ? (
+                <Card
+                  key={index}
+                  className="dashboard-card hover:border-blue-300 transition-all hover:shadow-md cursor-pointer h-[240px] flex items-center justify-center"
+                  onClick={() => setAddProductOpen(true)}
+                >
                   <div className="flex flex-col items-center text-center gap-4 w-full">
                     {card.icon}
                     <h2 className="text-xl font-semibold">{card.title}</h2>
                     <p className="text-gray-600 text-sm">{card.description}</p>
                   </div>
                 </Card>
-              </Link>
+              ) : (
+                <Link to={card.link} key={index}>
+                  <Card className="dashboard-card hover:border-blue-300 transition-all hover:shadow-md cursor-pointer h-[240px] flex items-center justify-center">
+                    <div className="flex flex-col items-center text-center gap-4 w-full">
+                      {card.icon}
+                      <h2 className="text-xl font-semibold">{card.title}</h2>
+                      <p className="text-gray-600 text-sm">{card.description}</p>
+                    </div>
+                  </Card>
+                </Link>
+              )
             ))}
           </div>
+          
+          {/* Added Products Section */}
+          {products.length > 0 && (
+            <div className="mb-10">
+              <h2 className="text-2xl font-bold mb-4">Your Added Products</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {products.map((product) => (
+                  <Card key={product.id} className="p-4 flex flex-col gap-2">
+                    <div className="font-semibold text-lg">{product.name}</div>
+                    <div className="text-gray-600 text-sm">{product.description}</div>
+                    <div className="font-medium text-blue-700">₱{parseFloat(product.price).toFixed(2)}</div>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
           
           <h2 className="text-2xl font-bold mb-4">Recent Activity</h2>
           <Card className="p-6">
@@ -121,6 +185,55 @@ const BuyerDashboard = () => {
                   <div><strong>Items:</strong> {selectedOrder.items}</div>
                 </div>
               )}
+            </DialogContent>
+          </Dialog>
+          <Dialog open={addProductOpen} onOpenChange={setAddProductOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Add New Product</DialogTitle>
+              </DialogHeader>
+              <form className="space-y-4" onSubmit={handleProductFormSubmit}>
+                <div>
+                  <label className="block text-sm font-medium mb-1" htmlFor="product-name">Product Name</label>
+                  <input
+                    id="product-name"
+                    name="name"
+                    type="text"
+                    required
+                    className="w-full border rounded px-3 py-2"
+                    value={productForm.name}
+                    onChange={handleProductFormChange}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1" htmlFor="product-description">Description</label>
+                  <textarea
+                    id="product-description"
+                    name="description"
+                    required
+                    className="w-full border rounded px-3 py-2"
+                    value={productForm.description}
+                    onChange={handleProductFormChange}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1" htmlFor="product-price">Price</label>
+                  <input
+                    id="product-price"
+                    name="price"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    required
+                    className="w-full border rounded px-3 py-2"
+                    value={productForm.price}
+                    onChange={handleProductFormChange}
+                  />
+                </div>
+                <div className="flex justify-end">
+                  <Button type="submit">Add Product</Button>
+                </div>
+              </form>
             </DialogContent>
           </Dialog>
         </div>

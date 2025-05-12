@@ -52,6 +52,9 @@ import BuyerProfile from "./pages/profile/BuyerProfile";
 import MiddlemanProfile from "./pages/profile/MiddlemanProfile";
 import AdminProfile from "./pages/profile/AdminProfile";
 
+// Middleman Application Page
+import MiddlemanApplicationPage from "./pages/apply/MiddlemanApplicationPage";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -114,6 +117,9 @@ const App = () => (
           <Route path="/profile/buyer" element={<BuyerProfile />} />
           <Route path="/profile/middleman" element={<MiddlemanProfile />} />
           <Route path="/profile/admin" element={<AdminProfile />} />
+          
+          {/* Middleman Application Route */}
+          <Route path="/apply/middleman" element={<MiddlemanApplicationPage />} />
           
           {/* Catch-all Route */}
           <Route path="*" element={<NotFound />} />

@@ -11,10 +11,12 @@ import { IdDocumentUpload } from "./auth/IdDocumentUpload";
 interface AuthFormProps {
   type: "login" | "signup";
   role: "buyer" | "seller" | "middleman" | "admin";
+  onSuccess?: (userData: { name: string, email: string, password: string }) => void;
 }
 export function AuthForm({
   type,
-  role
+  role,
+  onSuccess
 }: AuthFormProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -128,10 +130,11 @@ export function AuthForm({
       setIsLoading(false);
       if (type === "login") {
         toast.success("Logged in successfully");
+        if (onSuccess) onSuccess({ name, email, password });
       } else {
         toast.success("Account created successfully");
+        if (onSuccess) onSuccess({ name, email, password });
       }
-      navigate(`/dashboard/${role}`);
     }, 1500);
   };
   return <form onSubmit={handleSubmit} className="space-y-6">

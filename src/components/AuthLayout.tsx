@@ -28,8 +28,7 @@ export function AuthLayout({
       <header className="py-4 px-6 bg-white shadow-sm">
         <div className="container mx-auto">
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-lg">S</div>
-            <span className="text-xl font-bold"><span className="text-black">Sell</span><span className="text-blue-600">Mate</span></span>
+            <span className="text-blue-600 font-bold text-xl">SellMate</span>
           </Link>
         </div>
       </header>
