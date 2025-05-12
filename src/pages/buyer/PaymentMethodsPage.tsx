@@ -43,26 +43,20 @@ const PaymentMethodsPage = () => {
     {
       id: 'gcash',
       name: 'GCash',
-      icon: '/lovable-uploads/e0f77b0f-875e-4f04-9508-7fd4610e69cf.png',
+      icon: '/GCash-Logo.png',
       description: 'Connect your GCash account for secure transactions with middlemen'
     },
     {
       id: 'maya',
-      name: 'Maya',
-      icon: '/lovable-uploads/e0f77b0f-875e-4f04-9508-7fd4610e69cf.png',
-      description: 'Use Maya for fast and reliable payments with middlemen'
+      name: 'Paymaya',
+      icon: '/PayMaya-Logo_Vertical.png',
+      description: 'Use Paymaya for fast and reliable payments with middlemen'
     },
     {
       id: 'credit-card',
-      name: 'Credit Card',
-      icon: '/lovable-uploads/e0f77b0f-875e-4f04-9508-7fd4610e69cf.png',
-      description: 'Add your credit or debit card for convenient transactions'
-    },
-    {
-      id: 'bank-transfer',
-      name: 'Bank Transfer',
-      icon: '/lovable-uploads/e0f77b0f-875e-4f04-9508-7fd4610e69cf.png',
-      description: 'Set up bank transfer for direct payments to middlemen'
+      name: 'GOtyme',
+      icon: '/OIP-removebg-preview.png',
+      description: 'Add your GOtyme card for convenient transactions'
     }
   ];
 
@@ -179,7 +173,6 @@ const PaymentMethodsPage = () => {
                   <TabsTrigger value="all" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">All Methods</TabsTrigger>
                   <TabsTrigger value="e-wallet" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">E-Wallet</TabsTrigger>
                   <TabsTrigger value="cards" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">Cards</TabsTrigger>
-                  <TabsTrigger value="banks" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">Banks</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="all" className="mt-0">
@@ -193,7 +186,7 @@ const PaymentMethodsPage = () => {
                       >
                         <div className="p-6 flex flex-col items-center text-center gap-4">
                           <div className="relative">
-                            <CreditCard className="h-12 w-12 text-blue-500" />
+                            <img src={method.icon} alt={method.name + ' logo'} className="h-12 w-12 object-contain" />
                             {selectedMethod === method.id && (
                               <div className="absolute -top-2 -right-2 bg-blue-500 text-white rounded-full p-1">
                                 <Check className="h-3 w-3" />
@@ -219,7 +212,7 @@ const PaymentMethodsPage = () => {
                       >
                         <div className="p-6 flex flex-col items-center text-center gap-4">
                           <div className="relative">
-                            <CreditCard className="h-12 w-12 text-blue-500" />
+                            <img src={method.icon} alt={method.name + ' logo'} className="h-12 w-12 object-contain" />
                             {selectedMethod === method.id && (
                               <div className="absolute -top-2 -right-2 bg-blue-500 text-white rounded-full p-1">
                                 <Check className="h-3 w-3" />
@@ -245,33 +238,7 @@ const PaymentMethodsPage = () => {
                       >
                         <div className="p-6 flex flex-col items-center text-center gap-4">
                           <div className="relative">
-                            <CreditCard className="h-12 w-12 text-blue-500" />
-                            {selectedMethod === method.id && (
-                              <div className="absolute -top-2 -right-2 bg-blue-500 text-white rounded-full p-1">
-                                <Check className="h-3 w-3" />
-                              </div>
-                            )}
-                          </div>
-                          <h2 className="text-xl font-semibold">{method.name}</h2>
-                          <p className="text-gray-600 text-sm">{method.description}</p>
-                        </div>
-                      </Card>
-                    ))}
-                  </div>
-                </TabsContent>
-
-                <TabsContent value="banks" className="mt-0">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {paymentMethods.filter(m => ['bank-transfer'].includes(m.id)).map((method) => (
-                      <Card 
-                        key={method.id}
-                        className={`cursor-pointer transition-all hover:shadow-lg transform hover:-translate-y-1 
-                        ${selectedMethod === method.id ? 'border-blue-500 ring-2 ring-blue-300 shadow-md' : 'hover:border-blue-300'}`}
-                        onClick={() => handleSelectMethod(method.id)}
-                      >
-                        <div className="p-6 flex flex-col items-center text-center gap-4">
-                          <div className="relative">
-                            <CreditCard className="h-12 w-12 text-blue-500" />
+                            <img src={method.icon} alt={method.name + ' logo'} className="h-12 w-12 object-contain" />
                             {selectedMethod === method.id && (
                               <div className="absolute -top-2 -right-2 bg-blue-500 text-white rounded-full p-1">
                                 <Check className="h-3 w-3" />
@@ -345,47 +312,50 @@ const PaymentMethodsPage = () => {
 
                   {filteredAccounts.length > 0 ? (
                     <div className="space-y-4">
-                      {filteredAccounts.map((account) => (
-                        <Card key={account.id} className={`border ${account.isDefault ? 'border-blue-500 bg-blue-50' : ''}`}>
-                          <CardContent className="p-4">
-                            <div className="flex justify-between items-center">
-                              <div className="flex items-center gap-3">
-                                <div className="bg-blue-100 p-2 rounded-full">
-                                  <CreditCard className="h-5 w-5 text-blue-600" />
+                      {filteredAccounts.map((account) => {
+                        const method = paymentMethods.find(m => m.id === account.methodId);
+                        return (
+                          <Card key={account.id} className={`border ${account.isDefault ? 'border-blue-500 bg-blue-50' : ''}`}>
+                            <CardContent className="p-4">
+                              <div className="flex justify-between items-center">
+                                <div className="flex items-center gap-3">
+                                  <div className="bg-blue-100 p-2 rounded-full">
+                                    <img src={method?.icon} alt={method?.name + ' logo'} className="h-5 w-5 object-contain" />
+                                  </div>
+                                  <div>
+                                    <h4 className="font-medium">{account.accountName}</h4>
+                                    <p className="text-sm text-gray-600">{account.accountNumber}</p>
+                                  </div>
+                                  {account.isDefault && (
+                                    <span className="bg-blue-100 text-blue-600 text-xs py-1 px-2 rounded-full">
+                                      Default
+                                    </span>
+                                  )}
                                 </div>
-                                <div>
-                                  <h4 className="font-medium">{account.accountName}</h4>
-                                  <p className="text-sm text-gray-600">{account.accountNumber}</p>
-                                </div>
-                                {account.isDefault && (
-                                  <span className="bg-blue-100 text-blue-600 text-xs py-1 px-2 rounded-full">
-                                    Default
-                                  </span>
-                                )}
-                              </div>
-                              <div className="flex gap-2">
-                                {!account.isDefault && (
+                                <div className="flex gap-2">
+                                  {!account.isDefault && (
+                                    <Button 
+                                      variant="outline" 
+                                      size="sm"
+                                      onClick={() => handleSetDefault(account.id)}
+                                    >
+                                      Set as Default
+                                    </Button>
+                                  )}
                                   <Button 
-                                    variant="outline" 
+                                    variant="destructive" 
                                     size="sm"
-                                    onClick={() => handleSetDefault(account.id)}
+                                    className="bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 border-red-200"
+                                    onClick={() => handleDeleteAccount(account.id)}
                                   >
-                                    Set as Default
+                                    <Trash2 className="h-4 w-4" />
                                   </Button>
-                                )}
-                                <Button 
-                                  variant="destructive" 
-                                  size="sm"
-                                  className="bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 border-red-200"
-                                  onClick={() => handleDeleteAccount(account.id)}
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
+                                </div>
                               </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))}
+                            </CardContent>
+                          </Card>
+                        );
+                      })}
                     </div>
                   ) : (
                     <div className="text-center py-10 border rounded-md bg-gray-50">

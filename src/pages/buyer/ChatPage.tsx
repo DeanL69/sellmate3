@@ -5,10 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Search, Send, Phone, Image, Paperclip, ArrowLeft, Info, Clock } from "lucide-react";
+import { Search, Send, Phone, Image, Paperclip, Info, Clock } from "lucide-react";
 import { ChatContact, ChatMessage, PendingTransaction } from "@/types/middleman";
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
+import { BackButton } from "@/components/ui/back-button";
 
 const ChatPage = () => {
   const navigate = useNavigate();
@@ -149,13 +150,7 @@ const ChatPage = () => {
         <div className="container mx-auto p-0 md:p-4 h-[calc(100vh-8rem)] flex flex-col">
           {/* Back button */}
           <div className="px-4 py-2">
-            <Button 
-              variant="ghost" 
-              className="mb-2 text-blue-600 hover:bg-blue-50 hover:text-blue-700 flex items-center"
-              onClick={handleBack}
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-            </Button>
+            <BackButton />
           </div>
           
           <Card className="flex-1 border-blue-200 shadow-xl flex flex-col md:flex-row overflow-hidden">

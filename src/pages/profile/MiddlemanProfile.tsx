@@ -33,27 +33,31 @@ const MiddlemanProfile = () => {
         </div>
         <div>
           <label className="block mb-2 font-semibold">Name</label>
-          <input className="w-full border rounded p-2" type="text" placeholder="Your name" />
+          <input className="w-full border rounded p-2" type="text" placeholder="Your name" readOnly />
         </div>
         <div>
           <label className="block mb-2 font-semibold">Email</label>
-          <input className="w-full border rounded p-2" type="email" placeholder="Your email" />
+          <input className="w-full border rounded p-2" type="email" placeholder="Your email" readOnly />
         </div>
         <div>
           <label className="block mb-2 font-semibold">Expertise</label>
-          <input className="w-full border rounded p-2" type="text" placeholder="Your expertise" />
+          <input className="w-full border rounded p-2" type="text" placeholder="Your expertise" readOnly />
         </div>
         <div>
           <label className="block mb-2 font-semibold">Phone</label>
-          <input className="w-full border rounded p-2" type="text" placeholder="Your phone number" />
+          <input className="w-full border rounded p-2" type="text" placeholder="Your phone number" readOnly />
         </div>
         <hr className="my-6" />
         <div>
           <label className="block mb-2 font-semibold">Change Password</label>
-          <input className="w-full border rounded p-2 mb-2" type="password" placeholder="New password" />
-          <input className="w-full border rounded p-2" type="password" placeholder="Confirm new password" />
+          <div className="flex items-center gap-2 mb-2">
+            <input className="w-full border rounded p-2" type="password" placeholder="Old password" required />
+            <button type="button" className="text-blue-600 hover:underline whitespace-nowrap" onClick={() => alert('A code has been sent to your email.')}>Forgot password?</button>
+          </div>
+          <input className="w-full border rounded p-2 mb-2" type="password" placeholder="New password" required />
+          <input className="w-full border rounded p-2" type="password" placeholder="Confirm new password" required />
         </div>
-        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">Update Profile</button>
+        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">Update Password</button>
       </form>
     </div>
   );

@@ -92,7 +92,7 @@ const HomePage = () => {
 
   return (
     <div className={`flex flex-col min-h-screen relative ${darkMode ? 'bg-[#181e29]' : ''}`}>
-      <NavBar darkMode={darkMode} setDarkMode={setDarkMode} />
+      <NavBar />
       
       {/* Hero Section with animated background */}
       <section className={`${darkMode ? 'bg-gradient-to-r from-[#232b3a] via-[#181e29] to-[#232b3a]' : 'bg-gradient-to-r from-blue-50 via-blue-100 to-blue-50'} py-16 relative overflow-hidden`}>
@@ -259,7 +259,7 @@ const HomePage = () => {
                 {/* Left blurred card with partial content */}
                 <div
                   key={((selectedIdx - 1 + steps.length) % steps.length)}
-                  className="w-72 h-96 bg-blue-100 rounded-2xl border-4 border-blue-50 flex flex-col items-center justify-center select-none"
+                  className="w-72 h-96 bg-blue-100 rounded-2xl border-4 border-blue-50 flex flex-col items-center justify-center select-none blur-sm opacity-70"
                   style={{ pointerEvents: 'none' }}
                 >
                   <div className="flex flex-col items-center justify-center w-full h-full">
@@ -283,7 +283,7 @@ const HomePage = () => {
                 {/* Right blurred card with partial content */}
                 <div
                   key={((selectedIdx + 1) % steps.length)}
-                  className="w-72 h-96 bg-blue-100 rounded-2xl border-4 border-blue-50 flex flex-col items-center justify-center select-none"
+                  className="w-72 h-96 bg-blue-100 rounded-2xl border-4 border-blue-50 flex flex-col items-center justify-center select-none blur-sm opacity-70"
                   style={{ pointerEvents: 'none' }}
                 >
                   <div className="flex flex-col items-center justify-center w-full h-full">

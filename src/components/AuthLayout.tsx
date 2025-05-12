@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { BackButton } from "@/components/ui/back-button";
 import { cn } from "@/lib/utils";
 
 interface AuthLayoutProps {
@@ -24,6 +24,12 @@ export function AuthLayout({
 }: AuthLayoutProps) {
   return (
     <div className={cn("min-h-screen flex flex-col", className)}>
+      {/* Back button fixed at top left, outside header */}
+      {showBackLink && (
+        <div className="fixed top-6 left-6 z-50">
+          <BackButton />
+        </div>
+      )}
       {/* Header with logo */}
       <header className="py-4 px-6 bg-white shadow-sm">
         <div className="container mx-auto">
@@ -35,27 +41,22 @@ export function AuthLayout({
       
       {/* Main content */}
       <div className="flex-1 flex items-center justify-center p-6">
-        <div className="w-full max-w-xl bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden animate-fade-in">
+        <div className="w-full max-w-xl bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden animate-fade-in relative">
+          {showBackLink && (
+            <div className="absolute top-6 left-6 z-10">
+              <BackButton />
+            </div>
+          )}
           <div className="bg-gradient-to-r from-blue-600 to-blue-500 h-3"></div>
-          <div className="p-10">
+          <div className="p-10 pt-16">
             <div className="flex flex-col gap-7">
               <div className="flex flex-col gap-2 animate-fade-in">
                 <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
                 {subtitle && <p className="text-base text-muted-foreground">{subtitle}</p>}
               </div>
-              
               <div className="animate-fade-in">
                 {children}
               </div>
-              
-              {showBackLink && (
-                <Link 
-                  to={backLinkUrl} 
-                  className="flex items-center text-sm text-muted-foreground hover:text-blue-600 gap-1 transition-colors animate-fade-in mt-2"
-                >
-                  <ArrowLeft className="h-3 w-3" />
-                </Link>
-              )}
             </div>
           </div>
         </div>

@@ -128,15 +128,37 @@ const SignupPage = () => {
             ))}
           </div>
           <Dialog open={showMiddlemanDialog} onOpenChange={setShowMiddlemanDialog}>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle>Apply for Middleman</DialogTitle>
-              </DialogHeader>
-              <div className="py-4 text-base">Do you want to apply for middleman?</div>
-              <DialogFooter className="flex gap-2 justify-end">
-                <Button variant="outline" onClick={handleCancelMiddleman}>Cancel</Button>
-                <Button onClick={handleConfirmMiddleman}>Confirm</Button>
-              </DialogFooter>
+            <DialogContent className="sm:max-w-2xl p-0 bg-white rounded-2xl overflow-hidden shadow-2xl border-0">
+              <div className="flex flex-col md:flex-row items-center justify-between w-full h-full" style={{ minHeight: 340 }}>
+                {/* Left: Text */}
+                <div className="flex-1 flex flex-col items-start justify-center px-8 py-10 bg-white">
+                  <div className="text-4xl font-extrabold mb-2 text-gray-900">
+                    <span className="text-gray-700">NOW </span>
+                    <span className="text-yellow-500">WE ARE</span>
+                  </div>
+                  <div className="text-5xl font-extrabold text-blue-900 mb-4 tracking-tight">HIRING</div>
+                  <div className="text-orange-500 font-semibold text-sm mb-8" style={{ letterSpacing: 1 }}>
+                    ARE YOU<br />READY<br />TO JOIN US?
+                  </div>
+                </div>
+                {/* Right: Image and Button */}
+                <div className="flex-1 flex flex-col items-center justify-center px-8 py-10 bg-white">
+                  <div className="rounded-3xl overflow-hidden shadow-lg mb-8" style={{ width: 280, height: 160 }}>
+                    <img
+                      src="https://img.freepik.com/free-photo/business-people-group-background_53876-104897.jpg?w=740&q=80"
+                      alt="Hiring"
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+                  <Button
+                    className="bg-blue-900 hover:bg-blue-800 text-white px-10 py-3 rounded-full text-lg font-bold shadow-lg tracking-wide"
+                    style={{ letterSpacing: 2 }}
+                    onClick={handleConfirmMiddleman}
+                  >
+                    FILL UP
+                  </Button>
+                </div>
+              </div>
             </DialogContent>
           </Dialog>
         </>

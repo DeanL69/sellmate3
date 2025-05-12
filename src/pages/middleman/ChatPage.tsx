@@ -278,6 +278,17 @@ const ChatPage = () => {
                         >
                           Details
                         </Button>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          className="text-xs border-red-300 text-white font-semibold"
+                          onClick={e => {
+                            e.stopPropagation();
+                            setPendingTransactions(prev => prev.filter(pt => pt.id !== transaction.id));
+                          }}
+                        >
+                          Decline
+                        </Button>
                       </div>
                     </div>
                   ))}

@@ -55,6 +55,9 @@ import AdminProfile from "./pages/profile/AdminProfile";
 // Middleman Application Page
 import MiddlemanApplicationPage from "./pages/apply/MiddlemanApplicationPage";
 
+import { ProductProvider } from "@/ProductContext";
+import { OrderProvider } from "@/OrderContext";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -62,69 +65,73 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          
-          {/* Authentication Routes */}
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/login/:role" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
-          <Route path="/signup/:role" element={<SignupPage />} />
-          
-          {/* Dashboard Routes */}
-          <Route path="/dashboard/buyer" element={<BuyerDashboard />} />
-          <Route path="/dashboard/seller" element={<SellerDashboard />} />
-          <Route path="/dashboard/middleman" element={<MiddlemanDashboard />} />
-          <Route path="/dashboard/admin" element={<AdminDashboard />} />
-          
-          {/* Buyer Feature Routes */}
-          <Route path="/dashboard/buyer/payment-methods" element={<PaymentMethodsPage />} />
-          <Route path="/dashboard/buyer/middlemen" element={<BrowseMiddlemenPage />} />
-          <Route path="/dashboard/buyer/orders" element={<OrdersPage />} />
-          <Route path="/dashboard/buyer/chat" element={<BuyerChatPage />} />
-          
-          {/* Seller Feature Routes */}
-          <Route path="/dashboard/seller/products" element={<SellerProductsPage />} />
-          <Route path="/dashboard/seller/analytics" element={<SellerAnalyticsPage />} />
-          <Route path="/dashboard/seller/orders" element={<SellerOrdersPage />} />
-          <Route path="/dashboard/seller/payments" element={<SellerPaymentsPage />} />
-          <Route path="/dashboard/seller/chat" element={<SellerChatPage />} />
-          
-          {/* Middleman Feature Routes */}
-          <Route path="/dashboard/middleman/transactions" element={<MiddlemanTransactionsPage />} />
-          <Route path="/dashboard/middleman/history" element={<MiddlemanHistoryPage />} />
-          <Route path="/dashboard/middleman/schedule" element={<MiddlemanSchedulePage />} />
-          <Route path="/dashboard/middleman/clients" element={<MiddlemanClientsPage />} />
-          <Route path="/dashboard/middleman/chat" element={<MiddlemanChatPage />} />
-          
-          {/* Admin Feature Routes */}
-          <Route path="/dashboard/admin/overview" element={<AdminOverviewPage />} />
-          <Route path="/dashboard/admin/users" element={<AdminUsersPage />} />
-          <Route path="/dashboard/admin/analytics" element={<AdminAnalyticsPage />} />
-          <Route path="/dashboard/admin/settings" element={<AdminSettingsPage />} />
-          
-          {/* Information Pages */}
-          <Route path="/about" element={<AboutUsPage />} />
-          <Route path="/careers" element={<CareersPage />} />
-          <Route path="/blog" element={<BlogPage />} />
-          <Route path="/terms" element={<TermsOfServicePage />} />
-          <Route path="/privacy" element={<PrivacyPolicyPage />} />
-          <Route path="/security" element={<SecurityPage />} />
-          
-          {/* Profile Routes */}
-          <Route path="/profile/seller" element={<SellerProfile />} />
-          <Route path="/profile/buyer" element={<BuyerProfile />} />
-          <Route path="/profile/middleman" element={<MiddlemanProfile />} />
-          <Route path="/profile/admin" element={<AdminProfile />} />
-          
-          {/* Middleman Application Route */}
-          <Route path="/apply/middleman" element={<MiddlemanApplicationPage />} />
-          
-          {/* Catch-all Route */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <OrderProvider>
+        <ProductProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              
+              {/* Authentication Routes */}
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/login/:role" element={<LoginPage />} />
+              <Route path="/signup" element={<SignupPage />} />
+              <Route path="/signup/:role" element={<SignupPage />} />
+              
+              {/* Dashboard Routes */}
+              <Route path="/dashboard/buyer" element={<BuyerDashboard />} />
+              <Route path="/dashboard/seller" element={<SellerDashboard />} />
+              <Route path="/dashboard/middleman" element={<MiddlemanDashboard />} />
+              <Route path="/dashboard/admin" element={<AdminDashboard />} />
+              
+              {/* Buyer Feature Routes */}
+              <Route path="/dashboard/buyer/payment-methods" element={<PaymentMethodsPage />} />
+              <Route path="/dashboard/buyer/middlemen" element={<BrowseMiddlemenPage />} />
+              <Route path="/dashboard/buyer/orders" element={<OrdersPage />} />
+              <Route path="/dashboard/buyer/chat" element={<BuyerChatPage />} />
+              
+              {/* Seller Feature Routes */}
+              <Route path="/dashboard/seller/products" element={<SellerProductsPage />} />
+              <Route path="/dashboard/seller/analytics" element={<SellerAnalyticsPage />} />
+              <Route path="/dashboard/seller/orders" element={<SellerOrdersPage />} />
+              <Route path="/dashboard/seller/payments" element={<SellerPaymentsPage />} />
+              <Route path="/dashboard/seller/chat" element={<SellerChatPage />} />
+              
+              {/* Middleman Feature Routes */}
+              <Route path="/dashboard/middleman/transactions" element={<MiddlemanTransactionsPage />} />
+              <Route path="/dashboard/middleman/history" element={<MiddlemanHistoryPage />} />
+              <Route path="/dashboard/middleman/schedule" element={<MiddlemanSchedulePage />} />
+              <Route path="/dashboard/middleman/clients" element={<MiddlemanClientsPage />} />
+              <Route path="/dashboard/middleman/chat" element={<MiddlemanChatPage />} />
+              
+              {/* Admin Feature Routes */}
+              <Route path="/dashboard/admin/overview" element={<AdminOverviewPage />} />
+              <Route path="/dashboard/admin/users" element={<AdminUsersPage />} />
+              <Route path="/dashboard/admin/analytics" element={<AdminAnalyticsPage />} />
+              <Route path="/dashboard/admin/settings" element={<AdminSettingsPage />} />
+              
+              {/* Information Pages */}
+              <Route path="/about" element={<AboutUsPage />} />
+              <Route path="/careers" element={<CareersPage />} />
+              <Route path="/blog" element={<BlogPage />} />
+              <Route path="/terms" element={<TermsOfServicePage />} />
+              <Route path="/privacy" element={<PrivacyPolicyPage />} />
+              <Route path="/security" element={<SecurityPage />} />
+              
+              {/* Profile Routes */}
+              <Route path="/profile/seller" element={<SellerProfile />} />
+              <Route path="/profile/buyer" element={<BuyerProfile />} />
+              <Route path="/profile/middleman" element={<MiddlemanProfile />} />
+              <Route path="/profile/admin" element={<AdminProfile />} />
+              
+              {/* Middleman Application Route */}
+              <Route path="/apply/middleman" element={<MiddlemanApplicationPage />} />
+              
+              {/* Catch-all Route */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </ProductProvider>
+      </OrderProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

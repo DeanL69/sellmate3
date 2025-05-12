@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -60,9 +59,9 @@ export function PasswordInput({
           onClick={() => setShowPassword(!showPassword)}
         >
           {showPassword ? (
-            <EyeOff className="h-5 w-5" />
-          ) : (
             <Eye className="h-5 w-5" />
+          ) : (
+            <EyeOff className="h-5 w-5" />
           )}
         </Button>
       </div>

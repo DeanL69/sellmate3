@@ -4,7 +4,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import RatingStars from './RatingStars';
 import { Middleman } from '@/types/middleman';
 import { toast } from "sonner";
 import { 
@@ -18,6 +17,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from 'react';
+import { useProductContext } from "@/ProductContext";
 
 interface MiddlemanCardProps {
   middleman: Middleman;
@@ -27,6 +27,7 @@ const MiddlemanCard = ({ middleman }: MiddlemanCardProps) => {
   const { name, avatar, rating, expertise, description, transactions, successRate } = middleman;
   const [contactDialogOpen, setContactDialogOpen] = useState(false);
   const [message, setMessage] = useState("");
+  const { products, addProduct } = useProductContext();
   
   const handleContact = () => {
     setContactDialogOpen(true);
@@ -36,6 +37,16 @@ const MiddlemanCard = ({ middleman }: MiddlemanCardProps) => {
     if (!message.trim()) {
       toast.error("Please enter a message");
       return;
+    }
+    
+    // If there are no products, add a sample product (for demo)
+    if (products.length === 0) {
+      addProduct({
+        id: Date.now(),
+        name: "Sample Product",
+        description: "This is a sample product added when contacting a middleman.",
+        price: "1000"
+      });
     }
     
     toast.success(`Message sent to ${name}. They will respond shortly.`);
@@ -59,7 +70,6 @@ const MiddlemanCard = ({ middleman }: MiddlemanCardProps) => {
                 <h3 className="font-bold text-lg mr-2">{name}</h3>
                 <BadgeCheck className="h-5 w-5 text-blue-500" />
               </div>
-              <RatingStars rating={rating} />
             </div>
           </div>
           
@@ -104,7 +114,6 @@ const MiddlemanCard = ({ middleman }: MiddlemanCardProps) => {
               </Avatar>
               <div>
                 <p className="font-medium">{name}</p>
-                <p className="text-sm text-gray-500">Rating: {rating}/5</p>
               </div>
             </div>
             <div className="grid gap-2">

@@ -7,15 +7,18 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import React from "react";
+import { useProductContext } from "@/ProductContext";
+import { useOrderContext } from "@/OrderContext";
 
-const orders = [
+const initialOrders = [
   {
     id: '1',
     orderNumber: 'ORDER-12345',
     date: '2023-10-15',
     status: 'delivered',
     total: 8399.44,
-    items: 2
+    items: 2,
+    productName: '',
   },
   {
     id: '2',
@@ -23,7 +26,8 @@ const orders = [
     date: '2023-11-02',
     status: 'pending',
     total: 4479.44,
-    items: 1
+    items: 1,
+    productName: '',
   },
   {
     id: '3',
@@ -31,7 +35,8 @@ const orders = [
     date: '2023-11-20',
     status: 'pending',
     total: 16799.44,
-    items: 3
+    items: 3,
+    productName: '',
   }
 ];
 
@@ -45,18 +50,14 @@ function getStatusColor(status) {
 
 const BuyerDashboard = () => {
   const navigate = useNavigate();
+  const { products, addProduct } = useProductContext();
+  const { orders, addOrder } = useOrderContext();
   const dashboardCards = [
     {
-      title: "Browse Middlemen",
-      description: "Find trusted middlemen for your transactions",
-      icon: <UserCheck className="h-10 w-10 text-blue-500" />,
-      link: "/dashboard/buyer/middlemen"
-    },
-    {
-      title: "Payment Methods",
-      description: "Manage your payment information",
-      icon: <CreditCard className="h-10 w-10 text-blue-500" />,
-      link: "/dashboard/buyer/payment-methods"
+      title: "Add Product",
+      description: "List a new product for sale",
+      icon: <Package className="h-10 w-10 text-blue-500" />,
+      action: "addProduct"
     },
     {
       title: "Messages",
@@ -65,10 +66,10 @@ const BuyerDashboard = () => {
       link: "/dashboard/buyer/chat"
     },
     {
-      title: "Add Product",
-      description: "List a new product for sale",
-      icon: <Package className="h-10 w-10 text-blue-500" />,
-      action: "addProduct"
+      title: "Payment Methods",
+      description: "Manage your payment information",
+      icon: <CreditCard className="h-10 w-10 text-blue-500" />,
+      link: "/dashboard/buyer/payment-methods"
     },
   ];
 
@@ -76,7 +77,6 @@ const BuyerDashboard = () => {
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [addProductOpen, setAddProductOpen] = React.useState(false);
   const [productForm, setProductForm] = React.useState({ name: '', description: '', price: '' });
-  const [products, setProducts] = React.useState([]);
 
   const handleProductFormChange = (e) => {
     const { name, value } = e.target;
@@ -85,21 +85,26 @@ const BuyerDashboard = () => {
 
   const handleProductFormSubmit = (e) => {
     e.preventDefault();
-    // Add product to state
-    setProducts((prev) => [
-      ...prev,
-      {
-        name: productForm.name,
-        description: productForm.description,
-        price: productForm.price,
-        id: Date.now(),
-      },
-    ]);
+    addProduct({
+      name: productForm.name,
+      description: productForm.description,
+      price: productForm.price,
+      id: Date.now(),
+    });
+    // Add a new order for this product
+    const randomOrderNumber = `ORDER-${Math.floor(10000 + Math.random() * 90000)}`;
+    addOrder({
+      id: Date.now().toString(),
+      orderNumber: randomOrderNumber,
+      date: new Date().toISOString().split('T')[0],
+      status: 'pending',
+      total: parseFloat(productForm.price),
+      items: 1,
+      productName: productForm.name,
+    });
     setAddProductOpen(false);
     setProductForm({ name: '', description: '', price: '' });
-    // Redirect to Browse Middlemen page
     navigate('/dashboard/buyer/middlemen');
-    // Optionally show a toast/notification
   };
 
   return (
@@ -108,49 +113,37 @@ const BuyerDashboard = () => {
       <main className="flex-1 bg-blue-50">
         <div className="container mx-auto px-4 py-8">
           {/* <h1 className="text-3xl font-bold mb-8">Buyer Dashboard</h1> */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12 place-items-center">
             {dashboardCards.map((card, index) => (
               card.action === "addProduct" ? (
                 <Card
                   key={index}
-                  className="dashboard-card hover:border-blue-300 transition-all hover:shadow-md cursor-pointer h-[240px] flex items-center justify-center"
+                  className="dashboard-card w-[380px] h-[260px] flex items-center justify-center cursor-pointer border border-gray-200 bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-200"
                   onClick={() => setAddProductOpen(true)}
                 >
-                  <div className="flex flex-col items-center text-center gap-4 w-full">
-                    {card.icon}
-                    <h2 className="text-xl font-semibold">{card.title}</h2>
-                    <p className="text-gray-600 text-sm">{card.description}</p>
+                  <div className="flex flex-col items-center text-center gap-5 w-full">
+                    <span className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-blue-100 mb-2">
+                      {React.cloneElement(card.icon, { className: 'h-12 w-12 text-blue-500' })}
+                    </span>
+                    <h2 className="text-2xl font-semibold">{card.title}</h2>
+                    <p className="text-gray-600 text-base">{card.description}</p>
                   </div>
                 </Card>
               ) : (
                 <Link to={card.link} key={index}>
-                  <Card className="dashboard-card hover:border-blue-300 transition-all hover:shadow-md cursor-pointer h-[240px] flex items-center justify-center">
-                    <div className="flex flex-col items-center text-center gap-4 w-full">
-                      {card.icon}
-                      <h2 className="text-xl font-semibold">{card.title}</h2>
-                      <p className="text-gray-600 text-sm">{card.description}</p>
+                  <Card className="dashboard-card w-[380px] h-[260px] flex items-center justify-center cursor-pointer border border-gray-200 bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-200">
+                    <div className="flex flex-col items-center text-center gap-5 w-full">
+                      <span className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-blue-100 mb-2">
+                        {React.cloneElement(card.icon, { className: 'h-12 w-12 text-blue-500' })}
+                      </span>
+                      <h2 className="text-2xl font-semibold">{card.title}</h2>
+                      <p className="text-gray-600 text-base">{card.description}</p>
                     </div>
                   </Card>
                 </Link>
               )
             ))}
           </div>
-          
-          {/* Added Products Section */}
-          {products.length > 0 && (
-            <div className="mb-10">
-              <h2 className="text-2xl font-bold mb-4">Your Added Products</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {products.map((product) => (
-                  <Card key={product.id} className="p-4 flex flex-col gap-2">
-                    <div className="font-semibold text-lg">{product.name}</div>
-                    <div className="text-gray-600 text-sm">{product.description}</div>
-                    <div className="font-medium text-blue-700">₱{parseFloat(product.price).toFixed(2)}</div>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          )}
           
           <h2 className="text-2xl font-bold mb-4">Recent Activity</h2>
           <Card className="p-6">
@@ -267,6 +260,9 @@ function OrdersList({ orders, getStatusColor, setSelectedOrder, setDialogOpen })
                   <p className="text-sm text-gray-500">
                     {new Date(order.date).toLocaleDateString()}
                   </p>
+                  {order.productName && (
+                    <p className="text-sm text-gray-700 font-medium mt-1">{order.productName}</p>
+                  )}
                 </div>
               </div>
             </div>

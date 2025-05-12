@@ -111,7 +111,7 @@ const MiddlemanApplicationPage = () => {
               onChange={handleProofImageChange}
             />
             <p className="text-sm text-gray-500 mt-3">
-              Please upload an image that proves your expertise (e.g., certificate, award, work sample)
+              Please upload a file that proves your expertise (e.g., certificate, award, work sample)
             </p>
           </div>
         </div>
